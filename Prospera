@@ -1,0 +1,162 @@
+jsx
+import React, { useState } from 'react';
+import { View, Text, TextInput, Button } from 'react-native';
+
+const CadastroTransacao = () => {
+  const [descricao, setDescricao] = useState('');
+  const [valor, setValor] = useState(0);
+  const [data, setData] = useState(new Date());
+
+  const salvarTransacao = async () => {
+    const transacao = {
+      descricao,
+      valor,
+      data,
+    };
+    await firebase.firestore().collection('transacoes').add(transacao);
+  };
+
+  return (
+    <View>
+      <Text>Cadastro de Transação</Text>
+      <TextInput
+        placeholder="Descrição"
+        value={descricao}
+        onChangeText={(text) => setDescricao(text)}
+      />
+      <TextInput
+        placeholder="Valor"
+        value={valor.toString()}
+        onChangeText={(text) => setValor(parseFloat(text))}
+      />
+      <Button title="Salvar" onPress={salvarTransacao} />
+    </View>
+  );
+};
+
+export default CadastroTransacao;
+
+
+Tela de Lista de Transações
+
+jsx
+import React, { useState, useEffect } from 'react';
+import { View, Text, FlatList } from 'react-native';
+import { firebase } from 'firebase';
+
+const ListaTransacoes = () => {
+  const [transacoes, setTransacoes] = useState([]);
+
+  useEffect(() => {
+    const fetchTransacoes = async () => {
+      const transacoesRef = firebase.firestore().collection('transacoes');
+      const transacoesSnapshot = await transacoesRef.get();
+      setTransacoes(transacoesSnapshot.docs.map((doc) => doc.data()));
+    };
+    fetchTransacoes();
+  }, []);
+
+  return (
+    <View>
+      <Text>Lista de Transações</Text>
+      <FlatList
+        data={transacoes}
+        renderItem={({ item }) => (
+          <View>
+            <Text>{item.descricao}</Text>
+            <Text>{item.valor}</Text>
+          </View>
+        )}
+      />
+    </View>
+  );
+};
+
+export default ListaTransacoes;
+
+
+Módulo de Estoque
+
+Tela de Cadastro de Produtos
+
+jsx
+import React, { useState } from 'react';
+import { View, Text, TextInput, Button } from 'react-native';
+
+const CadastroProduto = () => {
+  const [nome, setNome] = useState('');
+  const [quantidade, setQuantidade] = useState(0);
+  const [valor, setValor] = useState(0);
+
+  const salvarProduto = async () => {
+    const produto = {
+      nome,
+      quantidade,
+      valor,
+    };
+    await firebase.firestore().collection('produtos').add(produto);
+  };
+
+  return (
+    <View>
+      <Text>Cadastro de Produto</Text>
+      <TextInput
+        placeholder="Nome"
+        value={nome}
+        onChangeText={(text) => setNome(text)}
+      />
+      <TextInput
+        placeholder="Quantidade"
+        value={quantidade.toString()}
+        onChangeText={(text) => setQuantidade(parseInt(text))}
+      />
+      <TextInput
+        placeholder="Valor"
+        value={valor.toString()}
+        onChangeText={(text) => setValor(parseFloat(text))}
+      />
+      <Button title="Salvar" onPress={salvarProduto} />
+    </View>
+  );
+};
+
+export default CadastroProduto;
+
+
+Tela de Lista de Produtos
+
+jsx
+import React, { useState, useEffect } from 'react';
+import { View, Text, FlatList } from 'react-native';
+import { firebase } from 'firebase';
+
+const ListaProdutos = () => {
+  const [produtos, setProdutos] = useState([]);
+
+  useEffect(() => {
+    const fetchProdutos = async () => {
+      const produtosRef = firebase.firestore().collection('produtos');
+      const produtosSnapshot = await produtosRef.get();
+      setProdutos(produtosSnapshot.docs.map((doc) => doc.data()));
+    };
+    fetchProdutos();
+  }, []);
+
+  return (
+    <View>
+      <Text>Lista de Produtos</Text>
+      <FlatList
+        data={produtos}
+        renderItem={({ item }) => (
+          <View>
+            <Text>{item.nome}</Text>
+            <Text>{item.quantidade}</Text>
+            <Text>{item.valor}</Text>
+          </View>
+        )}
+      />
+    </View>
+  );
+};
+
+export default ListaProdutos;
